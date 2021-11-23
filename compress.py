@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------
 
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, Dict
 from argparse import ArgumentParser
 
 from BinaryFileIO import BinaryFileWriter
@@ -15,6 +15,16 @@ from BinaryFileIO import BinaryFileWriter
 # ----------------------------------------------------------------------
 
 # ----------------------------------------------------------------------
+def readFrequencies(infile) -> Dict[str, int]:
+    frequencies = {}
+
+    return frequencies
+
+def createHeap():
+    pass
+
+def compress():
+    writer = BinaryFileWriter()
 
 def main():
     parser = ArgumentParser(description="compress file using Huffman compression algorithm")

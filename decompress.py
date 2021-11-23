@@ -6,12 +6,18 @@
 # 05/21/2021
 # ----------------------------------------------------------------------
 
-from typing import Optional
+from typing import Optional, Dict
 from argparse import ArgumentParser
 
 from BinaryFileIO import *
 
 # ----------------------------------------------------------------------
+
+def readKey() -> Dict[str, str]:
+    return {}
+
+def decompress() -> str:
+    return ""
 
 def main():
     parser = ArgumentParser(description="decompress file using Huffman compression algorithm")
