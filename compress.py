@@ -15,8 +15,28 @@ from BinaryFileIO import BinaryFileWriter
 # ----------------------------------------------------------------------
 
 # ----------------------------------------------------------------------
-def readFrequencies(infile) -> Dict[str, int]:
+
+def readData(filename) -> str:
+
+    infile = open(filename, "r")
+    fileContents = ""
+
+    line = infile.readline()
+    while line:
+        fileContents += line
+        line = infile.readline()
+
+    return fileContents
+
+def readFrequencies(data: str) -> Dict[str, int]:
+
     frequencies = {}
+    for i in range(len(data)):
+        char = data[i]
+        if char in frequencies:
+            frequencies[char] = frequencies[char] + 1
+        else:
+            frequencies[char] = 1
 
     return frequencies
 
@@ -24,7 +44,8 @@ def createHeap():
     pass
 
 def compress():
-    writer = BinaryFileWriter()
+    # writer = BinaryFileWriter()
+    pass
 
 def main():
     parser = ArgumentParser(description="compress file using Huffman compression algorithm")
@@ -37,6 +58,10 @@ def main():
     if compressedFile is None:
         compressedFile = fileToCompress + ".hc"
 
+    data: str = readData(fileToCompress)
+    frequencies: Dict[str, int] = readFrequencies(data)
+
+    print(frequencies)
 
 # ----------------------------------------------------------------------
 
