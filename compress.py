@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------
 
 from __future__ import annotations
-from typing import Optional, Dict, Tuple
+from typing import Optional, Dict, Tuple, List
 from argparse import ArgumentParser
 
 from BinaryFileIO import BinaryFileWriter
@@ -76,9 +76,24 @@ def _combineSubtrees(lTree: BinaryTree, rTree: BinaryTree) -> BinaryTree:
 
     # Creating a new root for the tree and attaching the trees as children of the root
     total = lTree.getSize() + rTree.getSize()
-    root = BinaryTreeNode((None, total), lTree, rTree)
+    root = BinaryTreeNode((None, total), lTree.getHead(), rTree.getHead())
     tree = BinaryTree(root)
     return tree
+
+def _generateKeys(node: BinaryTreeNode, binaryCode: str = "") -> List[Tuple]:
+    """ Recursive Traversal of Binary tree, accumulates the data of all binaryTreeNodes """
+    keys = []
+
+    if node.getLeft():
+        keys = keys + _generateKeys(node.getLeft(), binaryCode + "0")
+    if node.getRight():
+        keys = keys + _generateKeys(node.getRight(), binaryCode + "1")
+
+    nodeData = node.getData()
+    if nodeData[0] is not None:
+        keys.append((nodeData[0], nodeData[1], binaryCode))
+
+    return keys
 
 def readData(filename) -> str:
 
@@ -89,6 +104,8 @@ def readData(filename) -> str:
     while line:
         fileContents += line
         line = infile.readline()
+
+    infile.close()
 
     return fileContents
 
@@ -145,9 +162,46 @@ def createTree(priorityQueue) -> BinaryTree:
 
     return tree
 
-def compress():
-    # writer = BinaryFileWriter()
-    pass
+def createKey(tree: BinaryTree) -> List[Tuple]:
+
+    keys = _generateKeys(tree.getHead())
+    header = (tree.getSize(), len(keys))
+    keys.insert(0, header)
+
+    return keys
+
+def compress(data: str, key: List[Tuple], compressedFile: str):
+
+    for i in key:
+        print(i)
+
+    writer = BinaryFileWriter(compressedFile)
+
+    # Writing only the header
+    writer.writeUInt(key[0][0])
+    writer.writeUShort(key[0][1])
+
+    keyDict = {}
+    # Writing key data
+    for i in range(1, len(key)):
+
+        # Creating dictionary of chars to binary code for writing input data
+        keyDict[key[i][0]] = key[i][2]
+
+        # Writing character ascii value and amount
+        writer.writeUByte(ord(key[i][0]))
+        writer.writeUShort(key[i][1])
+
+        # Writing individual bits for character code
+        for num in key[i][2]:
+            writer.writeBit(int(num))
+
+    # Writing data
+    for char in data:
+        for num in keyDict[char]:
+            writer.writeBit(int(num))
+
+    writer.close()
 
 def main():
     parser = ArgumentParser(description="compress file using Huffman compression algorithm")
@@ -166,8 +220,12 @@ def main():
 
     # Ordering frequencies as a priority queue and creating a BinaryTree from frequencies
     priorityQueue = sorted(frequencies.items(), key=lambda x: x[1])
-    tree = createTree(priorityQueue)
+    tree: BinaryTree = createTree(priorityQueue)
 
+    key = createKey(tree)
+    compress(data, key, compressedFile)
+
+    return 0
 # ----------------------------------------------------------------------
 
 if __name__ == '__main__':

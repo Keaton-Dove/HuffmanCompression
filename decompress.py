@@ -13,9 +13,6 @@ from BinaryFileIO import *
 
 # ----------------------------------------------------------------------
 
-def readKey() -> Dict[str, str]:
-    return {}
-
 def decompress() -> str:
     return ""
 
