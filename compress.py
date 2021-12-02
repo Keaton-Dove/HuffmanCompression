@@ -172,9 +172,6 @@ def createKey(tree: BinaryTree) -> List[Tuple]:
 
 def compress(data: str, key: List[Tuple], compressedFile: str):
 
-    for i in key:
-        print(i)
-
     writer = BinaryFileWriter(compressedFile)
 
     # Writing only the header
